@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="bubbleDemo.css" />
+    <script src="jquery-1.7.1.min.js"></script>
+    <script src="bubbleDemo.js"></script>
+</head>
+<body>
+<div class="container">
+    <div id="bubble1"></div>
+    <div id="bubble2"></div>
+</div>
+</body>
+<script>
+    var el = $(".container");
+    var con = new container(el);
+    var el2 = $("#bubble1");
+    var el3 = $("#bubble2");
+    var b1 = new bubble(el2, 100, 1, 1, 100, 100);
+    var b2 = new bubble(el3, 100, 1, 1, 300, 300);
+    con.addBubble(b1);
+    con.addBubble(b2);
+    window.onload = function()
+    {
+        con.bubbleRun();
+    }
+</script>
+</html>
