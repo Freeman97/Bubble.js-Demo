@@ -6,7 +6,7 @@
 3. 将小球放入容器中，并使其运动，碰撞为完全弹性碰撞（利用动量守恒计算前后速度）
 */
 
-function bubble(a, r, x, y, mpx, mpy, mnx, mny)
+function bubble(a, r, x, y, mpx, mpy, mnx, mny, s)
 {
      /*  
         a为需要指定成为泡泡的jQuery对象
@@ -15,6 +15,7 @@ function bubble(a, r, x, y, mpx, mpy, mnx, mny)
         x, y: 初始坐标（原点为容器左上角）
         mpx, mpy: 泡泡的圆心在正方向上偏离原位置的最大距离（矩形）
         mnx, mny: 泡泡的圆心在负方向上偏离原位置的最大距离
+        s: 小球运动完成时间倍数（越大越慢）
     */
     this.el = a;
     this.radius = r;
@@ -24,6 +25,7 @@ function bubble(a, r, x, y, mpx, mpy, mnx, mny)
     this.mpy = mpy || 0;
     this.mnx = mnx || 0;
     this.mny = mny || 0;
+    this.s = s;
     a.css({
         "position": "absolute",
         "margin": 0,
@@ -44,11 +46,13 @@ bubble.prototype.runBubble = function()
     //当前偏移量
     var cx = parseInt(_this.el[0].style.left) - _this.x;
     var cy = parseInt(_this.el[0].style.top) - _this.y;
+    //当前各个方向能够使用的最大位移
     var mpx = Math.min(_this.mpx, _this.mpx - Math.abs(cx));
     var mnx = Math.min(_this.mnx, _this.mnx - Math.abs(cx));
     var mpy = Math.min(_this.mpy, _this.mpy - Math.abs(cy));
     var mny = Math.min(_this.mny, _this.mny - Math.abs(cy));
-    if(Math.floor(Math.random() * 10) % 2 == 0 && cx < _this.mpx)
+    // FixMe: 调用时传入正的mnx与mny值时bubble在某种情况下会突然静止，并触发Maximum call stack size exceeded错误，暂时没时间修复（
+    if(Math.floor(Math.random() * 10) % 2 == 0 && cx <= _this.mpx)
     {
         console.log("px");
         dx = Math.abs(Math.floor(Math.random() * mpx));
@@ -58,7 +62,7 @@ bubble.prototype.runBubble = function()
         console.log("nx");
         dx = -Math.abs(Math.floor(Math.random() * mnx));
     }
-    if(Math.floor(Math.random() * 10) % 2 == 0 && cy < _this.mpy)
+    if(Math.floor(Math.random() * 10) % 2 == 0 && cy <= _this.mpy)
     {
         console.log("py");
         dy = Math.abs(Math.floor(Math.random() * mpy));
@@ -68,12 +72,12 @@ bubble.prototype.runBubble = function()
         console.log("ny");
         dy = -Math.abs(Math.floor(Math.random() * mny));
     }
-    t = Math.floor(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))) * 5;
+    t = Math.floor(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))) * _this.s;
     console.log(dx, dy, cx, cy, mpx, mpy);
     this.el.animate({
         "left": "+=" + dx + "px",
         "top": "+=" + dy + "px"
-    }, t, 
+    }, t, "linear", 
         function()
         {
             _this.runBubble();
