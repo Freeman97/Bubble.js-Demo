@@ -15,17 +15,14 @@
 </div>
 </body>
 <script>
-    var el = $(".container");
-    var con = new container(el);
-    var el2 = $("#bubble1");
-    var el3 = $("#bubble2");
-    var b1 = new bubble(el2, 100, 1, 1, 100, 100);
-    var b2 = new bubble(el3, 100, 1, 1, 300, 300);
-    con.addBubble(b1);
-    con.addBubble(b2);
+    var el1 = $("#bubble1");
+    var el2 = $("#bubble2");
+    var b1 = new bubble(el1, 100, 100, 100, 100, 100);
+    var b2 = new bubble(el2, 100, 300, 300, 100, 100);
     window.onload = function()
     {
-        con.bubbleRun();
+        b1.runBubble(b1);
+        b2.runBubble(b2);
     }
 </script>
 </html>

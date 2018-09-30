@@ -6,165 +6,77 @@
 3. 将小球放入容器中，并使其运动，碰撞为完全弹性碰撞（利用动量守恒计算前后速度）
 */
 
-function container(a)
+function bubble(a, r, x, y, mpx, mpy, mnx, mny)
 {
-    //a为充当容器的jQuery对象
-    this.el = a;
-    this.cHeight = a[0].offsetHeight;
-    this.cWidth = a[0].offsetWidth;
-    this.bubbleTimer = 0;
-    this.bubbleAdded = [];
-}
-
-container.prototype.addBubble = function(a)
-{
-    this.bubbleAdded.push(a);
-}
-
-container.prototype.bubbleRun = function()
-{
-    clearInterval(this.bubbleTimer);
-    var n = this.bubbleAdded.length;
-    var resetFlag = false;
-    var _this = this;
-    console.log(n)
-    for(var i = 0; i < n; i++)
-    {
-        var sx = this.bubbleAdded[i].sx;
-        var sy = this.bubbleAdded[i].sy;
-        var d1 = Math.floor(1 + Math.random()) * Math.max(_this.cHeight ,_this.cWidth) * sx;
-        var d2 = Math.floor(1 + Math.random()) * Math.max(_this.cHeight ,_this.cWidth) * sy;
-        console.log({d1, d2});
-        this.bubbleAdded[i].sx = d1;
-        this.bubbleAdded[i].sy = d2;
-        var t = d1 * 2;
-        _this.bubbleAdded[i].el.animate({
-            "left": "+=" + d1,
-            "top": "+=" + d2
-        }, t);
-    }
-    this.bubbleTimer = setInterval(
-        function()
-        {
-            resetFlag = false;
-            for(var i = 0; i < n; i++)
-            {
-                for(var j = i + 1; j < n; j++)
-                {
-                    if(_this.isColl(_this.bubbleAdded[i], _this.bubbleAdded[j], 10))
-                    {
-                        resetFlag = true;
-                        _this.collision(_this.bubbleAdded[i], _this.bubbleAdded[j]);
-                    }
-                }
-            }
-            for(var i = 0; i < n; i++)
-            {
-                var s = _this.isColl2(_this.bubbleAdded[i], 10);
-                _this.collision2(_this.bubbleAdded[i] ,s);
-                if(!s[0] || !s[1] || !s[2] || !s[3])
-                {
-                    resetFlag = true;
-                }
-            }
-            if(resetFlag)
-            {
-                for(var i = 0; i < n; i++)
-                {
-                    var d1 = _this.bubbleAdded[i].sx;
-                    var d2 = _this.bubbleAdded[i].sy;
-                    var t = d1 * 2;
-                    _this.bubbleAdded[i].el.stop();
-                    console.log(_this.bubbleAdded[i]);
-                    // _this.bubbleAdded[i].el.animate({
-                    //     "left": "+=" + d1,
-                    //     "top": "+=" + d2
-                    // }, t);
-                }
-            }
-        }, 400
-    )
-}
-
-container.prototype.bubbleStop = function()
-{
-    clearInterval(this.bubbleTimer);
-}
-
-container.prototype.isColl = function(b1, b2, eps)
-{
-    //eps为碰撞判定的调整用参数....
-    var x1 = b1.el.offset().left + b1.el[0].offsetWidth / 2;
-    var y1 = b1.el.offset().top + b1.el.offset().top / 2;
-    var x2 = b2.el.offset().left + b2.el[0].offsetWidth / 2;
-    var y2 = b2.el.offset().top + b2.el.offset().top / 2;
-    var a = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
-    var b = b1.radius + b2.radius + eps;
-    return a <= b;
-}
-
-container.prototype.isColl2 = function(b1, eps)
-{
-    console.log(b1.el.offset().left);
-    var x1 = parseInt(b1.el.offset().left) + parseInt(b1.el[0].offsetWidth) / 2;
-    var y1 = parseInt(b1.el.offset().top) + parseInt(b1.el[0].offsetHeight) / 2;
-    console.log(b1.sx);
-    console.log(b1.sy);
-    var a = x1 - b1.radius >= eps;
-    var b = y1 - b1.radius >= eps;
-    var c = x1 + b1.radius - this.cWidth <= -eps;
-    var d = y1 + b1.radius - this.cHeight <= -eps;
-    console.log({a,b,c,d})
-    return {a, b, c, d};
-}
-
-container.prototype.collision = function(b1, b2)
-{
-    /*  
-        假设：小球质量与小球半径的平方成正比 -> 动量守恒，于是：
-        v1* = r2 ^ 2 / r1 ^ 2 * v2
-        v2* = r1 ^ 2 / r2 ^ 2 * v1
+     /*  
+        a为需要指定成为泡泡的jQuery对象
+        a: 充当悬浮泡泡的jQuery对象
+        r: 悬浮泡泡的半径
+        x, y: 初始坐标（原点为容器左上角）
+        mpx, mpy: 泡泡的圆心在正方向上偏离原位置的最大距离（矩形）
+        mnx, mny: 泡泡的圆心在负方向上偏离原位置的最大距离
     */
-    // b1.sx = -Math.pow(b2.radius, 2) / Math.pow(b1.radius, 2) * b2.sx;
-    // b1.sy = -Math.pow(b2.radius, 2) / Math.pow(b1.radius, 2) * b2.sy;
-    // b2.sx = -Math.pow(b1.radius, 2) / Math.pow(b2.radius, 2) * b1.sx;
-    // b2.sy = -Math.pow(b1.radius, 2) / Math.pow(b2.radius, 2) * b1.sy;
-    b1.sx = -b1.sx;
-    b1.sy = -b1.sy;
-    b2.sx = -b2.sx;
-    b2.sy = -b2.sy;
-}
-
-container.prototype.collision2 = function(b1, a)
-{
-    if(!a[0] || !a[2])
-    {
-        b1.sx *= -1;
-    }
-    if(!a[1] || !a[3])
-    {
-        b1.sy *= -1;
-    }
-}
-
-function bubble(a, r, sx, sy, x, y)
-{
-    //a为需要指定成为泡泡的jQuery对象
     this.el = a;
     this.radius = r;
-    this.sx = sx;
-    this.sy = sy;
     this.x = x;
     this.y = y;
+    this.mpx = mpx || 0;
+    this.mpy = mpy || 0;
+    this.mnx = mnx || 0;
+    this.mny = mny || 0;
     a.css({
         "position": "absolute",
         "margin": 0,
-        "width": "100px",
-        "height": "100px",
-        "border": "1px solid",
+        "width": r + "px",
+        "height": r + "px",
+        "background-color": "red",
         "left": x,
         "top": y,
         "border-radius": "50%"
     });
 }
 
+bubble.prototype.runBubble = function()
+{
+    var dx, dy, t;
+    var _this = this;
+    //计算一次位移之后泡泡在x、y轴正负方向能够移动的额度
+    //当前偏移量
+    var cx = parseInt(_this.el[0].style.left) - _this.x;
+    var cy = parseInt(_this.el[0].style.top) - _this.y;
+    var mpx = Math.min(_this.mpx, _this.mpx - Math.abs(cx));
+    var mnx = Math.min(_this.mnx, _this.mnx - Math.abs(cx));
+    var mpy = Math.min(_this.mpy, _this.mpy - Math.abs(cy));
+    var mny = Math.min(_this.mny, _this.mny - Math.abs(cy));
+    if(Math.floor(Math.random() * 10) % 2 == 0 && cx < _this.mpx)
+    {
+        console.log("px");
+        dx = Math.abs(Math.floor(Math.random() * mpx));
+    }
+    else
+    {
+        console.log("nx");
+        dx = -Math.abs(Math.floor(Math.random() * mnx));
+    }
+    if(Math.floor(Math.random() * 10) % 2 == 0 && cy < _this.mpy)
+    {
+        console.log("py");
+        dy = Math.abs(Math.floor(Math.random() * mpy));
+    }
+    else
+    {
+        console.log("ny");
+        dy = -Math.abs(Math.floor(Math.random() * mny));
+    }
+    t = Math.floor(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))) * 5;
+    console.log(dx, dy, cx, cy, mpx, mpy);
+    this.el.animate({
+        "left": "+=" + dx + "px",
+        "top": "+=" + dy + "px"
+    }, t, 
+        function()
+        {
+            _this.runBubble();
+        }
+    )
+}
