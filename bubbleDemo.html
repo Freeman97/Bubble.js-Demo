@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8"/>
-    <title>Page Title</title>
+    <title>Bubble Floating Demo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="stylesheet" type="text/css" href="bubbleDemo.css" />
     <script src="jquery-1.7.1.min.js"></script>
@@ -17,8 +17,8 @@
 <script>
     var el1 = $("#bubble1");
     var el2 = $("#bubble2");
-    var b1 = new bubble(el1, 100, 100, 100, 20, 20, 0, 0, 50);
-    var b2 = new bubble(el2, 100, 300, 300, 20, 20, 0, 0, 50);
+    var b1 = new bubble(el1, 100, 100, 100, 20, 20, 20, 20, 100, "linear");
+    var b2 = new bubble(el2, 100, 300, 300, 20, 20, 20, 20, 100, "linear");
     window.onload = function()
     {
         b1.runBubble(b1);
